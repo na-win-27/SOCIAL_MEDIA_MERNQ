@@ -1,0 +1,21 @@
+{
+  "name": "social_media_merng",
+  "version": "1.0.0",
+  "description": "MERNG APP",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "na-win-27",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.24.0",
+    "bcryptjs": "^2.4.3",
+    "email-validator": "^2.0.4",
+    "graphql": "^15.5.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.12.9",
+    "nodemon": "^2.0.7"
+  }
+}
