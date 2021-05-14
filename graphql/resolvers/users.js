@@ -26,7 +26,6 @@ module.exports = {
     async login(parent, args, ctx, info) {
       const { username, password } = args;
       const { errors, valid } = validateLoginInput(username, password);
-      console.log(errors);
       if (!valid) {
         throw new UserInputError("Errors", {
           errors,
@@ -42,7 +41,7 @@ module.exports = {
       }
 
       const match = await bcrypt.compare(password, user.password);
-      console.log(match);
+      // console.log(match);
       if (!match) {
         throw new UserInputError("errors", {
           error: "password wrong",
@@ -100,6 +99,10 @@ module.exports = {
           expiresIn: "1h",
         }
       );
+      ctx.req.headers = {
+        Authorization: `Bearer ${token}`,
+        ...ctx.req.headers,
+      };
       return {
         ...res._doc,
         id: res._id,
