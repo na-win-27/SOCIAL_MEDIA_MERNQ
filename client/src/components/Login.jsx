@@ -1,34 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Button, Form, Container } from "semantic-ui-react";
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
+import { useForm } from "../utils/hooks";
+import { AuthContext } from "../context/auth";
 
 const Login = (props) => {
+  const context = useContext(AuthContext);
   const [errors, setErrors] = useState({});
-  const [values, setValues] = useState({
+
+  const initialState = {
     username: "",
     password: "",
-  });
+  };
+
+  const { onChange, onSubmit, values } = useForm(signInUser, initialState);
 
   const [loginUser, { loading }] = useMutation(LOGIN_USER, {
     update(proxy, result) {
-      console.log(result);
+      // console.log(result.data.login);
+      context.login(result.data.login);
       props.history.push("./");
     },
     onError(err) {
-      // console.log(err.graphQLErrors[0].message);
-      setErrors(err.graphQLErrors[0].extensions.exception.errors);
+      // console.log(err.graphQLErrors[0].extensions.exception.error);
+      setErrors({ error: err.graphQLErrors[0].extensions.exception.error });
+      //console.log(errors);
     },
     variables: values,
   });
 
-  const onSubmit = (event) => {
-    event.preventDefault();
+  function signInUser() {
     loginUser();
-  };
-  const onChange = (event) =>
-    setValues({ ...values, [event.target.name]: event.target.value });
-
+  }
   return (
     <Container>
       <h2 className="page-title">Login</h2>
@@ -39,7 +43,6 @@ const Login = (props) => {
           name="username"
           value={values.username}
           onChange={onChange}
-          error={errors.username ? true : false}
         />
         <Form.Input
           type="password"
@@ -48,7 +51,6 @@ const Login = (props) => {
           name="password"
           value={values.password}
           onChange={onChange}
-          error={errors.password ? true : false}
         />
         <Button type="submit" primary>
           Register

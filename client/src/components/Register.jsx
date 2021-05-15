@@ -1,20 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Button, Form, Container } from "semantic-ui-react";
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
+import { useForm } from "../utils/hooks";
+import { AuthContext } from "../context/auth";
 
 const Register = (props) => {
   const [errors, setErrors] = useState({});
-  const [values, setValues] = useState({
+  const context = useContext(AuthContext);
+  const initialState = {
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
-  });
-
+  };
+  const { onChange, onSubmit, values } = useForm(registerUser, initialState);
   const [addUser, { loading }] = useMutation(REGISTER_USER, {
     update(proxy, result) {
-      console.log(result);
+      console.log(result.data.register);
+      context.login(result.data.register);
       props.history.push("./");
     },
     onError(err) {
@@ -24,13 +28,9 @@ const Register = (props) => {
     variables: values,
   });
 
-  const onSubmit = (event) => {
-    event.preventDefault();
+  function registerUser() {
     addUser();
-  };
-  const onChange = (event) =>
-    setValues({ ...values, [event.target.name]: event.target.value });
-
+  }
   return (
     <Container>
       <h2 className="page-title">Register Now</h2>
